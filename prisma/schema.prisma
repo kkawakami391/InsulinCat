@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model cat {
+  id      Int       @id @default(autoincrement())
+  name    String?   @db.VarChar(255)
+  breeds  String?   @db.VarChar(255)
+  age     Int?
+  insulin insulin[]
+}
+
+model insulin {
+  id              Int      @id @default(autoincrement())
+  vaccineLocation String   @db.VarChar(255)
+  vaccinedAt      DateTime @default(now()) @db.Timestamp(0)
+  chuuruNum       Int?
+  syringeNum      Int      @default(1)
+  catId           Int
+  cat             cat      @relation(fields: [catId], references: [id], onUpdate: Restrict, map: "insulin_ibfk_1")
+
+  @@index([catId], map: "catId")
+}
