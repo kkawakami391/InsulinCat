@@ -1,5 +1,5 @@
 import Image from "next/image";
-import InsulinForm from "./components/InsulinForm";
+import InsulinForm from "../../components/InsulinForm";
 
 export default function Home() {
   return (

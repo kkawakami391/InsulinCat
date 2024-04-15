@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-// import "./globals.css";
-import Nav from "./components/Nav";
-import MuiThemeProvider from "./components/MuiThemeProvider";
+import "./globals.css";
+import Nav from "../../components/Nav";
+import MuiThemeProvider from "../../components/MuiThemeProvider";
 
 export const metadata: Metadata = {
   title: "Insulinating the cat",

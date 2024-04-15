@@ -1,6 +1,5 @@
 "use client";
 
-import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -34,27 +33,11 @@ const MuiThemeProvider: React.FC<Props> = ({ children }) => {
         light: "#FEFAE0",
         contrastText: "#D4A373",
       },
-      background: {
-        default: "#FEFAE0"
-      }
     },
-    components: {
-      MuiCssBaseline: {
-        styleOverrides: {
-          body: {
-            marginLeft: 50,
-            marginTop: 80,
-            marginRight: 50,
-            marginBottom: 60,
-          },
-        },
-      }
-    }
   });
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDayjs}>{children}</LocalizationProvider>
     </ThemeProvider>
   );
