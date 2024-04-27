@@ -1,28 +1,12 @@
 "use client";
 
-import { Button, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { Button, Typography } from "@mui/material";
+import React, {  useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs, { Dayjs } from "dayjs";
-
-type Inputs = {
-  gatinha: string;
-  vaccinLocation: string;
-  vaccinDate: string;
-  usedSyringe?: number;
-  usedChuru?: number;
-};
-
-// declare module "@mui/material/styles" {
-//     interface Palette {
-//       custom: Palette["secondary"]
-//     }
-
-//     interface PaletteOptions {
-//       custom?: PaletteOptions["secondary"]
-//     }
-//   }
+import FormTextField from "./atoms/FormTextField";
+import { Inputs } from "../models/InputType";
 
 declare module "@mui/material/TextField" {
   interface TextFieldPropsColorOverrides {
@@ -39,65 +23,62 @@ declare module "@mui/material/Button" {
 }
 
 const InsulinForm = () => {
+  // Uso de useForm para manejar el formulario
   const {
     register,
     handleSubmit,
-    watch,
     control,
     formState: { errors },
   } = useForm<Inputs>();
+
   const today = dayjs();
   const [catName, setCatName] = useState("Antifaz");
   const [value, setValue] = useState<Dayjs | null>(today);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCatName(event.target.value);
-  }
+  };
 
   const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
-  console.log(watch("vaccinDate")); // watch input value by passing the name of it
-
   return (
-    /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="h6">Gatinha:</Typography>
-      <TextField
+      <FormTextField
+        title="Gatinha"
         label="Gatinha"
         value={catName}
-        variant="outlined"
-        color="secondary"
-        {...register("gatinha")}
         onChange={handleChange}
-        sx={{ bgcolor: "white" }}
+        itemName="gatinha"
+        register={register}
+        errors={errors}
+        required={true}
       />
-      <Typography variant="h6">Cantidad de jeringa utilizada:</Typography>
-      <TextField
+      <FormTextField
+        title="Cantidad de jeringa utilizada:"
         label="Jeringas utilizadas"
         defaultValue={1}
-        variant="outlined"
         type="number"
-        color="secondary"
-        {...register("usedSyringe")}
-        sx={{ bgcolor: "white" }}
+        itemName="usedSyringe"
+        register={register}
+        required={true}
+        errors={errors}
       />
-      <Typography variant="h6">Lugar donde se inyecto:</Typography>
-      <TextField
+      <FormTextField
+        title="Lugar donde se inyecto:"
         label="Lugar de inyección"
-        variant="outlined"
-        color="secondary"
-        {...register("vaccinLocation")}
-        sx={{ bgcolor: "white" }}
-      />
-      <Typography variant="h6">Cantidad de chuuru utilizadas:</Typography>
-      <TextField
+        itemName="vaccinLocation"
+        register={register}
+        required={true}
+        errors={errors}
+        />
+      <FormTextField
+        title="Cantidad de chuuru utilizadas:"
         label="Chuuru utilizadas"
-        variant="outlined"
         type="number"
-        color="secondary"
-        {...register("usedChuru")}
-        sx={{ bgcolor: "white" }}
-      />
+        itemName="usedChuru"
+        register={register}
+        errors={errors}
+        />
       <Typography variant="h6">Dia de la inyeccion:</Typography>
       <Controller
         control={control}
@@ -119,27 +100,16 @@ const InsulinForm = () => {
           );
         }}
       />
-      {/* register your input into the hook by invoking the "register" function */}
-      {/* <input
-        type="number"
-        defaultValue="Number of Syringes"
-        {...register("usedSyringe")}
-      /> */}
-      {/* {errors.usedSyringe && <span>This field is a number</span>} */}
-      {/* include validation with required or other standard HTML validation rules */}
-      {/* <input {...register("vaccinLocation", { required: true })} /> */}
-      {/* errors will return when field validation fails  */}
-      {/* {errors.vaccinLocation && <span>This field is required</span>} */}
-
-      {/* <input type="submit" /> */}
-      <Button type="submit" variant='contained' color="green" sx={{ display: "block", my: 3 }}>
+      <Button
+        type="submit"
+        variant="contained"
+        color="green"
+        sx={{ display: "block", my: 3 }}
+      >
         Registrar Vacuna
       </Button>
     </form>
   );
-  //   return (
-  //     <div>InsulinForm</div>
-  //   )
 };
 
 export default InsulinForm;
