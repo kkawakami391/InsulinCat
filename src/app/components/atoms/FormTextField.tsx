@@ -69,6 +69,7 @@ const FormTextField = (props: Props) => {
             value={value}
             variant="outlined"
             color="secondary"
+            inputProps={{step: 0.1}}
             {...register(itemName, {
               required: {
                 value: required,
