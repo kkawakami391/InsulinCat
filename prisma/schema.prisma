@@ -7,22 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model cat {
+model Cat {
   id      Int       @id @default(autoincrement())
-  name    String?   @db.VarChar(255)
+  name    String   @db.VarChar(255)
   breeds  String?   @db.VarChar(255)
   age     Int?
-  insulin insulin[]
+  insulin Insulin[]
 }
 
-model insulin {
+model Insulin {
   id              Int      @id @default(autoincrement())
   vaccineLocation String   @db.VarChar(255)
   vaccinedAt      DateTime @default(now()) @db.Timestamp(0)
   chuuruNum       Int?
   syringeNum      Int      @default(1)
   catId           Int
-  cat             cat      @relation(fields: [catId], references: [id], onUpdate: Restrict, map: "insulin_ibfk_1")
+  cat             Cat      @relation(fields: [catId], references: [id], onUpdate: Restrict, map: "insulin_ibfk_1")
 
   @@index([catId], map: "catId")
 }
