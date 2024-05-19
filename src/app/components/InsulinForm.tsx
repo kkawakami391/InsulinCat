@@ -32,10 +32,10 @@ const InsulinForm = () => {
     handleSubmit,
     control,
     formState: { errors },
+    setValue,
   } = useForm<Inputs>();
 
   const today = dayjs();
-  const [value, setValue] = useState<Dayjs | null>(today);
   const [catNames, setCatNames] = useState<string[]>([]);
 
   // Funcion para obtener los nombres de los gatos
@@ -50,10 +50,31 @@ const InsulinForm = () => {
     getCatsNames();
   }, []);
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  // Registrar datos de la vacuna
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    fetch("http://localhost:3000/api/cats/register-insulin", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert("Vacuna registrada con exito!");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <Typography variant="h6">Nombre de la Gatinha:</Typography>
       <FormControl>
         <InputLabel color="secondary">Selecciona una gatinha</InputLabel>
         <Controller
@@ -65,7 +86,7 @@ const InsulinForm = () => {
             <Select
               {...field}
               onChange={(e) => {
-                field.onChange(e);
+                field.onChange(e.target.value);
               }}
               variant="outlined"
               color="secondary"
@@ -114,14 +135,19 @@ const InsulinForm = () => {
         defaultValue={today.format("YYYY/MM/DD hh:mm A")}
         name="vaccinDate"
         rules={{ required: true }}
-        render={({ field: { ref } }) => {
+        render={({ field: { ref, onChange, value } }) => {
           return (
             <DateTimePicker
-              {...register("vaccinDate")}
               value={dayjs(value)}
               inputRef={ref}
+              format="YYYY/MM/DD hh:mm A"
               onChange={(date) => {
-                setValue(date);
+                if (date) {
+                  const formattedDate =
+                    dayjs(date).format("YYYY/MM/DD hh:mm A");
+                  onChange(formattedDate);
+                  setValue("vaccinDate", formattedDate);
+                }
               }}
               maxDate={today}
               sx={{ bgcolor: "white" }}
