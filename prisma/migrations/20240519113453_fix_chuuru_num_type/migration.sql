@@ -7,6 +7,3 @@
 */
 -- AlterTable
 ALTER TABLE `insulin` MODIFY `chuuruNum` DECIMAL(65, 30) NULL;
-
--- CreateIndex
-CREATE UNIQUE INDEX `Insulin_catId_key` ON `Insulin`(`catId`);
