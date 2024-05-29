@@ -10,3 +10,8 @@ export const parseDate = (date: string) => {
   const jsDate = dayjsDate.toDate();
   return jsDate;
 };
+
+export const dateToString = (date: Date) => {
+  const dayjsDate = dayjs(date);
+  return dayjsDate.format("YYYY/MM/DD hh:mm A");
+};
