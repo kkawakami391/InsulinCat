@@ -5,6 +5,7 @@ import MuiThemeProvider from "./components/MuiThemeProvider";
 
 export const metadata: Metadata = {
   title: "Insulinating the cat",
+  icons: "favicon.ico",
 };
 
 export default function RootLayout({
