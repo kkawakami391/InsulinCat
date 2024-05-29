@@ -21,7 +21,7 @@ model Insulin {
   vaccinedAt      DateTime @default(now()) @db.Timestamp(0)
   chuuruNum       Decimal?
   syringeNum      Int      @default(1)
-  catId           Int      @unique
+  catId           Int
   cat             Cat      @relation(fields: [catId], references: [id], onUpdate: Restrict, map: "insulin_ibfk_1")
 
   @@index([catId], map: "catId")
