@@ -1,4 +1,4 @@
-import { Inputs } from "@/app/models/InputType";
+import { InsulinInputs } from "@/app/models/InputType";
 import { TextField, Typography } from "@mui/material";
 import React from "react";
 import { FieldErrors, UseFormRegister, Validate } from "react-hook-form";
@@ -23,16 +23,16 @@ type Props = {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 
   // Nombre de los campos del useForm
-  itemName: keyof Inputs;
+  itemName: keyof InsulinInputs;
 
   // Funcion para registrar los campos del useForm
-  register: UseFormRegister<Inputs>;
+  register: UseFormRegister<InsulinInputs>;
 
   // Si el campo es requerido
   required?: boolean;
 
   // Errores del useForm
-  errors: FieldErrors<Inputs>;
+  errors: FieldErrors<InsulinInputs>;
 };
 
 const FormTextField = (props: Props) => {
@@ -49,7 +49,7 @@ const FormTextField = (props: Props) => {
   } = props;
 
   // Validar que el numero sea positivo
-  const checkPositiveNumber: Validate<string | number | undefined, Inputs> = (
+  const checkPositiveNumber: Validate<string | number | undefined, InsulinInputs> = (
     value
   ) => {
     // Si el valor es un numero y es menor a 0

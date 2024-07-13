@@ -7,11 +7,12 @@ type RequestBodyType = {
 };
 
 export async function POST(req: NextRequest) {
-  const data: RequestBodyType = await req.json();
+  // const data: RequestBodyType = await req.json();
+  const { catName }: RequestBodyType = await req.json();
   try {
     const selectedCatId = await prisma.cat.findFirst({
       where: {
-        name: data.catName,
+        name: catName,
       },
       select: {
         id: true,

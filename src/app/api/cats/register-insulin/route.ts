@@ -1,17 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/app/lib/prisma/db";
 import { parseDate } from "@/app/lib/dayjs/parseDate";
+import { InsulinInputs } from "@/app/models/InputType";
 
-type RequestInputs = NextRequest & {
-  gatinha: string;
-  vaccinLocation: string;
-  vaccinDate: string;
-  usedSyringe?: number;
-  usedChuru?: number;
-};
-
-export async function POST(req: RequestInputs): Promise<NextResponse> {
-  const data = await req.json();
+export async function POST(req: NextRequest): Promise<NextResponse> {
+  const data: InsulinInputs = await req.json();
   const { gatinha, vaccinLocation, vaccinDate, usedSyringe, usedChuru } = data;
   if (typeof vaccinLocation !== "string") {
     return NextResponse.json({ error: "El tipo de input no es valido.", status: 400});
