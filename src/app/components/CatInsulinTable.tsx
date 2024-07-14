@@ -67,8 +67,8 @@ const CatInsulinTable = (props: Props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {recentInsulin.map((insulin) => (
-                <TableRow key={insulin.vaccineLocation}>
+              {recentInsulin.map((insulin, index) => (
+                <TableRow key={index}>
                   <TableCell>{insulin.vaccineLocation}</TableCell>
                   <TableCell sx={{ borderLeft: "1", borderRight: "1" }}>
                     {insulin.vaccinedAt}

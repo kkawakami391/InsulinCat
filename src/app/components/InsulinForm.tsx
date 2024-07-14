@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Box,
   Button,
   FormControl,
   InputLabel,
@@ -11,9 +12,10 @@ import {
 import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import FormTextField from "./atoms/FormTextField";
-import { Inputs } from "../models/InputType";
+import { InsulinInputs } from "../models/InputType";
+import CatInsulinTable from "./CatInsulinTable";
 
 declare module "@mui/material/Button" {
   interface ButtonPropsColorOverrides {
@@ -33,10 +35,12 @@ const InsulinForm = () => {
     control,
     formState: { errors },
     setValue,
-  } = useForm<Inputs>();
+    reset,
+  } = useForm<InsulinInputs>();
 
   const today = dayjs();
   const [catNames, setCatNames] = useState<string[]>([]);
+  const [catName, setCatName] = useState<string>("");
 
   // Funcion para obtener los nombres de los gatos
   async function getCatsNames() {
@@ -51,119 +55,129 @@ const InsulinForm = () => {
   }, []);
 
   // Registrar datos de la vacuna
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    fetch("http://localhost:3000/api/cats/register-insulin", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          alert(data.error);
-        } else {
-          alert("Vacuna registrada con exito!");
+  const onSubmit: SubmitHandler<InsulinInputs> = async (data) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/cats/register-insulin",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      );
+
+      const responseData = await response.json();
+
+      if (responseData.error) {
+        alert(responseData.error);
+      } else {
+        alert("Vacuna registrada con exito!");
+        setCatName("");
+        reset();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="h6">Nombre de la Gatinha:</Typography>
-      <FormControl>
-        <InputLabel color="secondary">Selecciona una gatinha</InputLabel>
-        <Controller
-          name="gatinha"
-          control={control}
-          defaultValue=""
-          rules={{ required: "Es necesario seleccionar una gatinha!" }}
-          render={({ field }) => (
-            <Select
-              {...field}
-              onChange={(e) => {
-                field.onChange(e.target.value);
-              }}
-              variant="outlined"
-              color="secondary"
-              label="Selecciona una gatinha"
-              sx={{ width: "223px", bgcolor: "white" }}
-            >
-              {catNames.map((catName) => (
-                <MenuItem key={catName} value={catName}>
-                  {catName}
-                </MenuItem>
-              ))}
-            </Select>
-          )}
+    <Box sx={{ display: "flex" }}>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ marginRight: "40px" }}>
+        <Typography variant="h6">Nombre de la Gatinha:</Typography>
+        <FormControl>
+          <InputLabel color="secondary">Selecciona una gatinha</InputLabel>
+          <Controller
+            name="gatinha"
+            control={control}
+            defaultValue=""
+            rules={{ required: "Es necesario seleccionar una gatinha!" }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                  setCatName(e.target.value);
+                }}
+                variant="outlined"
+                color="secondary"
+                label="Selecciona una gatinha"
+                sx={{ width: "223px", bgcolor: "white" }}
+              >
+                {catNames.map((catName, index) => (
+                  <MenuItem key={index} value={catName}>
+                    {catName}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
+          />
+        </FormControl>
+        <Typography sx={{ color: "red" }}>{errors.gatinha?.message}</Typography>
+        <FormTextField
+          title="Cantidad de jeringas utilizadas:"
+          label="Jeringas utilizadas"
+          defaultValue={1}
+          type="number"
+          itemName="usedSyringe"
+          register={register}
+          required={true}
+          errors={errors}
         />
-      </FormControl>
-      <Typography sx={{ color: "red" }}>{errors.gatinha?.message}</Typography>
-      <FormTextField
-        title="Cantidad de jeringas utilizadas:"
-        label="Jeringas utilizadas"
-        defaultValue={1}
-        type="number"
-        itemName="usedSyringe"
-        register={register}
-        required={true}
-        errors={errors}
-      />
-      <FormTextField
-        title="Lugar donde se inyecto:"
-        label="Lugar de inyección"
-        itemName="vaccinLocation"
-        register={register}
-        required={true}
-        errors={errors}
-      />
-      <FormTextField
-        title="Cantidad de chuuru utilizadas:"
-        label="Chuuru utilizadas"
-        type="number"
-        itemName="usedChuru"
-        register={register}
-        errors={errors}
-      />
-      <Typography variant="h6">Dia de la inyeccion:</Typography>
-      <Controller
-        control={control}
-        defaultValue={today.format("YYYY/MM/DD hh:mm A")}
-        name="vaccinDate"
-        rules={{ required: true }}
-        render={({ field: { ref, onChange, value } }) => {
-          return (
-            <DateTimePicker
-              value={dayjs(value)}
-              inputRef={ref}
-              format="YYYY/MM/DD hh:mm A"
-              onChange={(date) => {
-                if (date) {
-                  const formattedDate =
-                    dayjs(date).format("YYYY/MM/DD hh:mm A");
-                  onChange(formattedDate);
-                  setValue("vaccinDate", formattedDate);
-                }
-              }}
-              maxDate={today}
-              sx={{ bgcolor: "white" }}
-            />
-          );
-        }}
-      />
-      <Button
-        type="submit"
-        variant="contained"
-        color="green"
-        sx={{ display: "block", my: 3 }}
-      >
-        Registrar Vacuna
-      </Button>
-    </form>
+        <FormTextField
+          title="Lugar donde se inyecto:"
+          label="Lugar de inyección"
+          itemName="vaccinLocation"
+          register={register}
+          required={true}
+          errors={errors}
+        />
+        <FormTextField
+          title="Cantidad de chuuru utilizadas:"
+          label="Chuuru utilizadas"
+          type="number"
+          itemName="usedChuru"
+          register={register}
+          errors={errors}
+        />
+        <Typography variant="h6">Dia de la inyeccion:</Typography>
+        <Controller
+          control={control}
+          defaultValue={today.format("YYYY/MM/DD hh:mm A")}
+          name="vaccinDate"
+          rules={{ required: true }}
+          render={({ field: { ref, onChange, value } }) => {
+            return (
+              <DateTimePicker
+                value={dayjs(value)}
+                inputRef={ref}
+                format="YYYY/MM/DD hh:mm A"
+                onChange={(date) => {
+                  if (date) {
+                    const formattedDate =
+                      dayjs(date).format("YYYY/MM/DD hh:mm A");
+                    onChange(formattedDate);
+                    setValue("vaccinDate", formattedDate);
+                  }
+                }}
+                maxDate={today}
+                sx={{ bgcolor: "white" }}
+              />
+            );
+          }}
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="green"
+          sx={{ display: "block", my: 3 }}
+        >
+          Registrar Vacuna
+        </Button>
+      </form>
+      <CatInsulinTable catName={catName} />
+    </Box>
   );
 };
 
