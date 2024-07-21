@@ -4,13 +4,13 @@ import prisma from "@/app/lib/prisma/db";
 export async function GET() {
   let catsNames: string[] = [];
   try {
-    const catsNameColumns = await prisma.cat.findMany({
+    const catNameRecords = await prisma.cat.findMany({
       select: {
         name: true,
       },
     });
-    if (catsNameColumns) {
-      catsNameColumns.forEach((cat) => {
+    if (catNameRecords) {
+      catNameRecords.forEach((cat) => {
         catsNames.push(cat.name);
       });
     }

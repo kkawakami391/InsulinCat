@@ -49,9 +49,10 @@ const FormTextField = (props: Props) => {
   } = props;
 
   // Validar que el numero sea positivo
-  const checkPositiveNumber: Validate<string | number | undefined, InsulinInputs> = (
-    value
-  ) => {
+  const checkPositiveNumber: Validate<
+    string | number | undefined,
+    InsulinInputs
+  > = (value) => {
     // Si el valor es un numero y es menor a 0
     if (type === "number" && typeof value === "number" && value <= 0) {
       return "Tiene que ser un numero positivo!";
@@ -69,7 +70,10 @@ const FormTextField = (props: Props) => {
             value={value}
             variant="outlined"
             color="secondary"
-            inputProps={{step: 0.1}}
+            // inputProps={{step: 0.1}}
+            inputProps={
+              itemName === "usedSyringe" ? { step: 1 } : { step: 0.1 }
+            }
             {...register(itemName, {
               required: {
                 value: required,
