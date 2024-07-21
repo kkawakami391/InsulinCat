@@ -25,7 +25,7 @@ const CatInsulinTable = (props: Props) => {
     if (!catName) return;
     const getRecentInsulin = async () => {
       const response = await fetch(
-        "http://localhost:3000/api/cats/get-recent-insulin",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/cats/get-recent-insulin`,
         {
           method: "POST",
           headers: {

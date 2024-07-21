@@ -24,7 +24,7 @@ declare module "@mui/material/Button" {
 }
 // Api response type
 type catNamesData = {
-  name: string[];
+  names: string[];
 };
 
 const InsulinForm = () => {
@@ -44,9 +44,10 @@ const InsulinForm = () => {
 
   // Funcion para obtener los nombres de los gatos
   async function getCatsNames() {
-    const response = await fetch("http://localhost:3000/api/cats/get_cats");
-    const data: catNamesData = await response.json();
-    setCatNames(data.name);
+    // const response = await fetch("http://localhost:3000/api/cats/get_cats");
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cats/get_cats`);
+    const { names }: catNamesData = await response.json();
+    setCatNames(names);
   }
 
   // Uso de useEffect para obtener los nombres de los gatos al cargar el componente
@@ -58,7 +59,7 @@ const InsulinForm = () => {
   const onSubmit: SubmitHandler<InsulinInputs> = async (data) => {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/cats/register-insulin",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/cats/register-insulin`,
         {
           method: "POST",
           body: JSON.stringify(data),
