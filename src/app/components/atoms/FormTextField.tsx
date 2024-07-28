@@ -10,9 +10,6 @@ type Props = {
   // Etiqueta del campo
   label: string;
 
-  // Valor del campo
-  value?: string | number;
-
   // Valor por defecto
   defaultValue?: string | number;
 
@@ -39,7 +36,7 @@ const FormTextField = (props: Props) => {
   const {
     title,
     label,
-    value,
+    defaultValue,
     type = "text",
     onChange,
     itemName,
@@ -49,16 +46,19 @@ const FormTextField = (props: Props) => {
   } = props;
 
   // Validar que el numero sea positivo
-  const checkPositiveNumber: Validate<
-    string | number | undefined,
-    InsulinInputs
-  > = (value) => {
+  function checkPositiveNumber(
+    value: string | number | undefined
+  ): string | boolean {
+    // Value tiene que ser del tipo number
+    if (typeof value !== "number") {
+      return "Tiene que ser un numero";
+    }
     // Si el valor es un numero y es menor a 0
-    if (type === "number" && typeof value === "number" && value <= 0) {
+    if (value <= 0) {
       return "Tiene que ser un numero positivo!";
     }
     return true;
-  };
+  }
 
   return (
     <>
@@ -67,7 +67,8 @@ const FormTextField = (props: Props) => {
           <Typography variant="h6">{title}</Typography>
           <TextField
             label={label}
-            value={value}
+            // value={value}
+            defaultValue={defaultValue}
             variant="outlined"
             color="secondary"
             inputProps={
@@ -93,7 +94,6 @@ const FormTextField = (props: Props) => {
           <Typography variant="h6">{title}</Typography>
           <TextField
             label={label}
-            value={value}
             variant="outlined"
             color="secondary"
             {...register(itemName, {
