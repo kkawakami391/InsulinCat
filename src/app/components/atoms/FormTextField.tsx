@@ -67,7 +67,6 @@ const FormTextField = (props: Props) => {
           <Typography variant="h6">{title}</Typography>
           <TextField
             label={label}
-            // value={value}
             defaultValue={defaultValue}
             variant="outlined"
             color="secondary"
