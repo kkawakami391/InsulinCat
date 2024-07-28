@@ -70,7 +70,6 @@ const FormTextField = (props: Props) => {
             value={value}
             variant="outlined"
             color="secondary"
-            // inputProps={{step: 0.1}}
             inputProps={
               itemName === "usedSyringe" ? { step: 1 } : { step: 0.1 }
             }

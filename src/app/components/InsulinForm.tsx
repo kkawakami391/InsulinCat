@@ -44,7 +44,9 @@ const InsulinForm = () => {
 
   // Funcion para obtener los nombres de los gatos
   async function getCatsNames() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cats/get_cats`);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/cats/get_cats`
+    );
     const { names }: catNamesData = await response.json();
     setCatNames(names);
   }
