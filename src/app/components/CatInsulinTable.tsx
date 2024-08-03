@@ -1,4 +1,5 @@
 import {
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -6,20 +7,34 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { RecentInsulinType } from "../models/InputType";
+import { RecentInsulinType } from "../models/RecentInsulin";
+import EditIcon from "@mui/icons-material/Edit";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CloseIcon from "@mui/icons-material/Close";
 
 type Props = {
   catName: string;
 };
 
+type InsulinEditData = {
+  vaccineLocation: string;
+  vaccinedAt: Date;
+  chuuruNum: number;
+}[];
+
 const CatInsulinTable = (props: Props) => {
   const theme = useTheme();
   const { catName } = props;
   const [recentInsulin, setRecentInsulin] = useState<RecentInsulinType[]>([]);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [InsulinEditData, setInsulinEditData] = useState<InsulinEditData>([]);
+
+  function handleOnChange() {}
 
   useEffect(() => {
     if (!catName) return;
@@ -34,7 +49,7 @@ const CatInsulinTable = (props: Props) => {
           body: JSON.stringify({ catName }),
         }
       );
-      const recentInsulinData = await response.json();
+      const recentInsulinData: RecentInsulinType[] = await response.json();
       setRecentInsulin(recentInsulinData);
     };
     getRecentInsulin();
@@ -46,7 +61,7 @@ const CatInsulinTable = (props: Props) => {
         <TableContainer
           component={Paper}
           sx={{
-            width: "43%",
+            width: isEditMode ? "65%" : "43%",
             height: "70%",
             borderRadius: "20px",
             border: "0",
@@ -55,27 +70,105 @@ const CatInsulinTable = (props: Props) => {
           <Table>
             <TableHead sx={{ backgroundColor: theme.palette.green.main }}>
               <TableRow>
-                <TableCell sx={{ color: "white" }}>
-                  <Typography variant="h6">Lugar vacunado</Typography>
+                {/* Lugar Header */}
+                <TableCell
+                  align="center"
+                  sx={{ color: "white", borderBottom: "none" }}
+                >
+                  <Typography variant="h6">Lugar</Typography>
                 </TableCell>
-                <TableCell sx={{ color: "white" }}>
-                  <Typography variant="h6">Dia vacunado</Typography>
+                {/* Dia Header */}
+                <TableCell
+                  align="center"
+                  sx={{ color: "white", borderBottom: "none" }}
+                >
+                  <Typography variant="h6">Dia</Typography>
                 </TableCell>
-                <TableCell sx={{ color: "white" }}>
-                  <Typography variant="h6">Chuuru usado</Typography>
+                {/* Chuuru Header */}
+                <TableCell
+                  align="center"
+                  sx={{ color: "white", borderBottom: "none" }}
+                >
+                  <Typography variant="h6">Chuuru</Typography>
                 </TableCell>
+                {/* Edit Header */}
+                {isEditMode ? (
+                  <TableCell sx={{ display: "flex" }}>
+                    <IconButton size="small">
+                      <CheckCircleOutlineIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setIsEditMode(!isEditMode);
+                      }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </TableCell>
+                ) : (
+                  <TableCell sx={{ display: "flex", justifyContent: "center" }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setIsEditMode(!isEditMode);
+                      }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
-              {recentInsulin.map((insulin, index) => (
-                <TableRow key={index}>
-                  <TableCell>{insulin.vaccineLocation}</TableCell>
-                  <TableCell sx={{ borderLeft: "1", borderRight: "1" }}>
-                    {insulin.vaccinedAt}
-                  </TableCell>
-                  <TableCell>{insulin.chuuruNum}</TableCell>
-                </TableRow>
-              ))}
+              {isEditMode
+                ? recentInsulin.map((data, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        {/* TextField: Lugar de vacuna */}
+                        <TextField
+                          size="small"
+                          defaultValue={data.vaccineLocation}
+                          sx={{ width: "140px" }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {/* TextField: Dia de vacuna */}
+                        <TextField
+                          size="small"
+                          defaultValue={data.vaccinedAt}
+                          sx={{ width: "185px" }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {/* TextField: Chuuru */}
+                        <TextField
+                          size="small"
+                          defaultValue={data.chuuruNum}
+                          sx={{ width: "50px" }}
+                        />
+                      </TableCell>
+                      <TableCell />
+                    </TableRow>
+                  ))
+                : recentInsulin.map((data, index) => (
+                    <TableRow key={index}>
+                      {/* Cell: Lugar de vacuna */}
+                      <TableCell align="center">
+                        {data.vaccineLocation}
+                      </TableCell>
+                      {/* Cell: Dia de vacuna */}
+                      <TableCell
+                        align="center"
+                        sx={{ borderLeft: "1", borderRight: "1" }}
+                      >
+                        {data.vaccinedAt}
+                      </TableCell>
+                      {/* Cell: Chuuru */}
+                      <TableCell align="center">{data.chuuruNum}</TableCell>
+                      <TableCell />
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </TableContainer>
