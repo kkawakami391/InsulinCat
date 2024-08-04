@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
           catId: selectedCatId.id,
         },
         select: {
+          id: true,
           vaccineLocation: true,
           vaccinedAt: true,
           chuuruNum: true,
