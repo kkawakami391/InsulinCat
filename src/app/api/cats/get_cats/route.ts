@@ -18,5 +18,5 @@ export async function GET() {
     console.error("Error al buscar la columna:", error);
     return NextResponse.json({ error: "Database query failed" });
   }
-  return NextResponse.json({ names: catsNames })  
+  return NextResponse.json({ catsNames });
 }

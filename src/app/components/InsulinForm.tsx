@@ -9,7 +9,7 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs from "dayjs";
@@ -22,12 +22,14 @@ declare module "@mui/material/Button" {
     green: true;
   }
 }
-// Api response type
-type catNamesData = {
-  names: string[];
+
+type Props = {
+  catsNames: string[];
 };
 
-const InsulinForm = () => {
+const InsulinForm = (props: Props) => {
+  const { catsNames } = props;
+
   // Uso de useForm para manejar el formulario
   const {
     register,
@@ -39,20 +41,7 @@ const InsulinForm = () => {
   } = useForm<InsulinInputs>();
 
   const today = dayjs();
-  const [catNames, setCatNames] = useState<string[]>([]);
   const [catName, setCatName] = useState<string>("");
-
-  // Funcion para obtener los nombres de los gatos
-  async function getCatsNames() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cats/get_cats`);
-    const { names }: catNamesData = await response.json();
-    setCatNames(names);
-  }
-
-  // Uso de useEffect para obtener los nombres de los gatos al cargar el componente
-  useEffect(() => {
-    getCatsNames();
-  }, []);
 
   // Registrar datos de la vacuna
   const onSubmit: SubmitHandler<InsulinInputs> = async (data) => {
@@ -105,7 +94,7 @@ const InsulinForm = () => {
                 label="Selecciona una gatinha"
                 sx={{ width: "223px", bgcolor: "white" }}
               >
-                {catNames.map((catName, index) => (
+                {catsNames.map((catName, index) => (
                   <MenuItem key={index} value={catName}>
                     {catName}
                   </MenuItem>
