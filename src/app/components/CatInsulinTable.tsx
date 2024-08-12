@@ -21,20 +21,66 @@ type Props = {
   catName: string;
 };
 
-type InsulinEditData = {
-  vaccineLocation: string;
-  vaccinedAt: Date;
-  chuuruNum: number;
-}[];
-
 const CatInsulinTable = (props: Props) => {
   const theme = useTheme();
   const { catName } = props;
   const [recentInsulin, setRecentInsulin] = useState<RecentInsulinType[]>([]);
+  const [originalInsulin, setOriginalInsulin] = useState<RecentInsulinType[]>(
+    []
+  );
   const [isEditMode, setIsEditMode] = useState(false);
-  const [InsulinEditData, setInsulinEditData] = useState<InsulinEditData>([]);
 
-  function handleOnChange() {}
+  // Funcion para manejar los cambios del input
+  function handleOnChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number
+  ) {
+    const { name, value } = e.target;
+    setRecentInsulin((recentInsulin) =>
+      recentInsulin.map((insulin, i) =>
+        index === i ? { ...insulin, [name]: value } : insulin
+      )
+    );
+  }
+
+  // Funcion para el boton del lapiz (Activa el modo Edit)
+  function handleEditClick() {
+    setOriginalInsulin([...recentInsulin]);
+    setIsEditMode(true);
+  }
+
+  // Funcion para el boton de cancelar el modo edit.
+  function handleCancelClick() {
+    setRecentInsulin([...originalInsulin]);
+    setIsEditMode(false);
+  }
+
+  // Funcion para realizar la edicion.
+  async function handleUpdateRecentInsulin(data: RecentInsulinType[]) {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/cats/edit-recent-insulin`,
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (responseData.error) {
+        alert(responseData.error);
+      } else {
+        setIsEditMode(false);
+        alert("Vacuna editada con exito!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
 
   useEffect(() => {
     if (!catName) return;
@@ -94,13 +140,16 @@ const CatInsulinTable = (props: Props) => {
                 {/* Edit Header */}
                 {isEditMode ? (
                   <TableCell sx={{ display: "flex" }}>
-                    <IconButton size="small">
+                    <IconButton
+                      size="small"
+                      onClick={() => handleUpdateRecentInsulin(recentInsulin)}
+                    >
                       <CheckCircleOutlineIcon />
                     </IconButton>
                     <IconButton
                       size="small"
                       onClick={() => {
-                        setIsEditMode(!isEditMode);
+                        handleCancelClick();
                       }}
                     >
                       <CloseIcon />
@@ -111,7 +160,7 @@ const CatInsulinTable = (props: Props) => {
                     <IconButton
                       size="small"
                       onClick={() => {
-                        setIsEditMode(!isEditMode);
+                        handleEditClick();
                       }}
                     >
                       <EditIcon />
@@ -128,7 +177,11 @@ const CatInsulinTable = (props: Props) => {
                         {/* TextField: Lugar de vacuna */}
                         <TextField
                           size="small"
+                          name="vaccineLocation"
                           defaultValue={data.vaccineLocation}
+                          onChange={(e) => {
+                            handleOnChange(e, index);
+                          }}
                           sx={{ width: "140px" }}
                         />
                       </TableCell>
@@ -136,7 +189,11 @@ const CatInsulinTable = (props: Props) => {
                         {/* TextField: Dia de vacuna */}
                         <TextField
                           size="small"
+                          name="vaccinedAt"
                           defaultValue={data.vaccinedAt}
+                          onChange={(e) => {
+                            handleOnChange(e, index);
+                          }}
                           sx={{ width: "185px" }}
                         />
                       </TableCell>
@@ -144,7 +201,11 @@ const CatInsulinTable = (props: Props) => {
                         {/* TextField: Chuuru */}
                         <TextField
                           size="small"
+                          name="chuuruNum"
                           defaultValue={data.chuuruNum}
+                          onChange={(e) => {
+                            handleOnChange(e, index);
+                          }}
                           sx={{ width: "50px" }}
                         />
                       </TableCell>

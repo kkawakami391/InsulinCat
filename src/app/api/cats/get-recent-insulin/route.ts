@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
       // TODO: Transformar los datos para que puedan utlizarse en el front. (vaccinedAt a string y chuuruNum a number)
       const recentInsulinDataFormatted = recentInsulinData.map((insulin) => {
         return {
+          id: insulin.id,
           vaccineLocation: insulin.vaccineLocation,
           vaccinedAt: dateToString(insulin.vaccinedAt),
           chuuruNum: insulin.chuuruNum?.toNumber(),
